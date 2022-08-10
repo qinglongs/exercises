@@ -1,0 +1,30 @@
+.expand-card .card-head {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+.expand-card .card-head .card-title {
+	color: #fff;
+	font-size: 16px;
+	font-weight: 500;
+	text-align: left;
+}
+
+.expand-card .card-head .arrow-icon {
+	transition: transform .5s ease;
+	margin-right: 4px;
+}
+
+.expand-card .card-head .down {
+	transform: rotate(-180deg);
+}
+
+.expand-card .container-item {
+	margin-bottom: 12px;
+}
+
+.expand-card .container-item:last-child {
+	margin-bottom: 0;
+}
