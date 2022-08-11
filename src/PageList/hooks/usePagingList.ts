@@ -10,12 +10,15 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<Ba
 
 	const pageParams = useRef({ current: 1, pageSize: 10, hasMore: true });
 
+	const [offset, setOffset] = useState(0);
+
 	/** 滚动事件 */
 	const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
 		const target = event.target as HTMLDivElement;
 		const scrollHeigth = target.scrollHeight;
 		const clientHeight = target.clientHeight;
 		const scrollTop = target.scrollTop;
+		setOffset(scrollTop);
 
 		if (clientHeight + scrollTop >= scrollHeigth - 1) {
 			onTouchBottom();
@@ -40,11 +43,8 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<Ba
 
 		try {
 			setLoading(true);
-			const res = await getList({ page_now: pageParams.current.current, page_size: pageParams.current.pageSize })
-
+			const res = await getList({ page_now: pageParams.current.current, page_size: pageParams.current.pageSize });
 			const tmp = refresh ? res.list : dataSource.concat(res.list)
-			console.log(tmp);
-
 			setDataSource(tmp);
 			pageParams.current.hasMore = dataSource.length < res.page.total_num
 		} finally {
@@ -54,12 +54,11 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<Ba
 
 	/** 初始化调用 */
 	useEffect(() => {
-		console.log('effect');
 		fetchList(true)
 	}, [])
 
 
-	return { loading, dataSource, onScroll, hasMore: pageParams.current.hasMore }
+	return { loading, dataSource, onScroll, hasMore: pageParams.current.hasMore,offset }
 }
 
 export default usePagingList;

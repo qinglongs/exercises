@@ -22,6 +22,7 @@
 .page-list {
 	overflow: auto;
 	height: 820px;
+	position: relative;
 }
 
 .page-list .card {

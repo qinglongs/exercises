@@ -4,16 +4,29 @@ import ExpandCard from './components/ExpandCard/index';
 
 import usePagingList from './hooks/usePagingList';
 
-import { getList } from './api'
+import useVirtualList from './hooks/useVirtualList';
+
+import { getList, GetListReponseItem } from './api'
 
 import './style.css';
 
+/** 渲染 listItem */
+const RenderListItem = (map: Map<number, Set<GetListReponseItem>>) => {
+	const keys = [...map.keys()]
+
+	return keys.map(key => {
+		return <div key={key} className="card">
+			<ExpandCard title={key + ''} list={[...map.get(key)!]} />
+		</div>
+	})
+}
+
 
 const PageList = () => {
+	const { loading, dataSource, onScroll, hasMore, offset } = usePagingList(getList);
 
-	const { loading, dataSource, onScroll, hasMore } = usePagingList(getList);
 
-	/** 我在考虑这一步是否要内置 usePagingList 中 ，如果内置到这个hooks的话这个hooks就不具有通用性了*/
+
 	const dataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
 
@@ -31,24 +44,28 @@ const PageList = () => {
 	}, [dataSource]);
 
 
-	const RenderListItem = (map: Map<number, Set<typeof dataSource[0]>>) => {
-		const keys = [...map.keys()]
 
-		return keys.map(key => {
-			return <div key={key} className="card">
-				<ExpandCard title={key + ''} list={[...map.get(key)!]} />
-			</div>
+	const totalHeight = useMemo(() => {
+		let tmp = 0;
+		[...dataSourceMap.keys()].forEach(key => {
+			tmp += 29 + 20;
+			const item = dataSourceMap.get(key)!;
+			tmp += item.size * 59
 		})
-	}
+		return tmp ? tmp - 20 : 0
+	}, [dataSourceMap])
+
+	const { position, dataSource: list } = useVirtualList(dataSource, { totalHeight, screenHeight: 820, showNumber: 10, offset })
+
+
+console.log(position);
 
 	return (
 		<div className="page-list-container">
 			<h1 className='title'>Meeting Notes</h1>
 
 			<div className="page-list" onScroll={onScroll}>
-
 				{RenderListItem(dataSourceMap)}
-
 				{loading &&
 					<div className="loading">
 						loading....
