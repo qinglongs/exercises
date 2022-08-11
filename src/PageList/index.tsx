@@ -25,7 +25,7 @@ const RenderListItem = (map: Map<number, Set<GetListReponseItem>>) => {
 
 const PageList = () => {
 
-	const { loading, dataSource, onScroll, hasMore, offset } = usePagingList(getList);
+	const { loading, dataSource, onScroll: onPageScroll, hasMore, offset } = usePagingList(getList);
 
 
 	/** create_time => Set<GetListReponseItem> */
@@ -42,48 +42,46 @@ const PageList = () => {
 		return map;
 	}, [dataSource]);
 
-	const totalHeight = useMemo(() => {
-		let tmp = 0;
-		[...dataSourceMap.keys()].forEach(key => {
-			tmp += 29 + 20;
-			const item = dataSourceMap.get(key)!;
-			tmp += item.size * 59
-		})
-		return tmp ? tmp - 20 : 0
-	}, [dataSourceMap])
+	// const totalHeight = useMemo(() => {
+	// 	let tmp = 0;
+	// 	[...dataSourceMap.keys()].forEach(key => {
+	// 		tmp += 29 + 20;
+	// 		const item = dataSourceMap.get(key)!;
+	// 		tmp += item.size * 59
+	// 	})
+	// 	return tmp ? tmp - 20 : 0
+	// }, [dataSourceMap])
 
-
-
-	const { position, dataSource: list } = useVirtualList(dataSource, { totalHeight, screenHeight: 820, showNumber: 10, offset })
-
-
+	const { list, totalHeight, offsetTop, onScroll, contentNode } = useVirtualList({ containerHeight: 820, itemHeight: 100 }, dataSource)
 
 	const renderDataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
 
 		list.forEach(item => {
 			const { create_time } = item;
-
 			let set = map.get(create_time);
-
 			if (!set) map.set(create_time, set = new Set());
-
 			map.set(create_time, set?.add(item));
 
 		})
 		return map;
 	}, [list]);
 
+	const handleScroll = (event: any) => {
+		onScroll(event);
+		onPageScroll(event);
+	}
+
 	return (
 		<div className="page-list-container">
-			<h1 className='title'>Meeting Notes</h1>
+			<h1 className='tit	le'>Meeting Notes</h1>
 
-			<div className="page-list" onScroll={onScroll}>
-				{/* <div className="placeholder" style={{ height: totalHeight }}></div> */}
+			<div ref={node => contentNode.current = node} className="page-list" onScroll={handleScroll}>
+				<div className="placeholder" style={{ height: totalHeight }}></div>
 
-				{/* <div style={{ position: 'absolute', top: position, left: 0, width: '100%' }}> */}
-				{RenderListItem(dataSourceMap)}
-				{/* </div> */}
+				<div style={{ position: 'absolute', top: offsetTop, left: 0, width: '100%' }}>
+					{RenderListItem(renderDataSourceMap)}
+				</div>
 
 				{loading &&
 					<div className="loading">

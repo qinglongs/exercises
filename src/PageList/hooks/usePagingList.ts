@@ -21,10 +21,10 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams,) => Promise<B
 		setOffset(scrollTop);
 
 		// 触底
+		
 		if (clientHeight + scrollTop >= scrollHeigth - 1) {
 			onTouchBottom();
 		}
-
 	}
 
 	/** 滚动触底时触发 */
