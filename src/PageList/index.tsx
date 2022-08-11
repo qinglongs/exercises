@@ -27,33 +27,9 @@ const PageList = () => {
 
 	const { loading, dataSource, onScroll: onPageScroll, hasMore, offset } = usePagingList(getList);
 
-
-	/** create_time => Set<GetListReponseItem> */
-	const dataSourceMap = useMemo(() => {
-		const map = new Map<number, Set<typeof dataSource[0]>>();
-
-		dataSource.forEach(item => {
-			const { create_time } = item;
-			let set = map.get(create_time);
-			if (!set) map.set(create_time, set = new Set());
-			map.set(create_time, set?.add(item));
-		})
-
-		return map;
-	}, [dataSource]);
-
-	// const totalHeight = useMemo(() => {
-	// 	let tmp = 0;
-	// 	[...dataSourceMap.keys()].forEach(key => {
-	// 		tmp += 29 + 20;
-	// 		const item = dataSourceMap.get(key)!;
-	// 		tmp += item.size * 59
-	// 	})
-	// 	return tmp ? tmp - 20 : 0
-	// }, [dataSourceMap])
-
 	const { list, totalHeight, offsetTop, onScroll, contentNode } = useVirtualList({ containerHeight: 820, itemHeight: 100 }, dataSource)
 
+	/**  create_time => Set<GetListReponseItem> */
 	const renderDataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
 
@@ -62,8 +38,8 @@ const PageList = () => {
 			let set = map.get(create_time);
 			if (!set) map.set(create_time, set = new Set());
 			map.set(create_time, set?.add(item));
-
 		})
+		
 		return map;
 	}, [list]);
 
