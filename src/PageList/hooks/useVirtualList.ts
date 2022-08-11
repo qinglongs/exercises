@@ -1,13 +1,16 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 
+import type { GetListReponseItem } from "../api";
+
 /** 虚拟滚动，支持不定高 元素的偏移度计算还有点误差需要优化 */
-const useVirtualList = (
+const useVirtualList =(
   params: {
     estimatedItemHeight: number;
     showNumber: number;
     loading: boolean;
   },
-  dataSource: Map<any, any>
+  // 先写死 dataSource 的类型
+  dataSource: Map<number, Set<GetListReponseItem>>
 ) => {
   const { estimatedItemHeight, showNumber, loading } = params;
 
@@ -45,7 +48,7 @@ const useVirtualList = (
     setscrollBarHeight(estimatedTotalHeight);
   };
 
-	/** 按每个元素的实际高度更新 */
+  /** 按每个元素的实际高度更新 */
   const updateItemHeight = ({
     index,
     height,
@@ -73,7 +76,7 @@ const useVirtualList = (
     itemTopCache.current = newItemTopCache;
   };
 
-	/** 查找到开始的元素位置 */
+  /** 查找到开始的元素位置 */
   const getStartIndex = (scrollTop: number) => {
     // 每一项距顶部的距离
     let arr = itemTopCache.current;
@@ -102,13 +105,13 @@ const useVirtualList = (
         return index;
       }
     }
-		console.log(index);
-		
+    console.log(index);
+
     index = left;
     return index;
   };
 
-  const onScroll = (event: any) => {
+  const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
     if (loading) return;
     const target = event.target as HTMLDivElement;
     const scrollTop = target.scrollTop;
