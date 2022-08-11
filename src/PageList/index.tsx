@@ -25,8 +25,6 @@ const RenderListItem = (map: Map<number, Set<GetListReponseItem>>) => {
 const PageList = () => {
 	const { loading, dataSource, onScroll, hasMore, offset } = usePagingList(getList);
 
-
-
 	const dataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
 
@@ -58,14 +56,35 @@ const PageList = () => {
 	const { position, dataSource: list } = useVirtualList(dataSource, { totalHeight, screenHeight: 820, showNumber: 10, offset })
 
 
-console.log(position);
+	console.log(position);
+
+	const renderDataSourceMap = useMemo(() => {
+		const map = new Map<number, Set<typeof dataSource[0]>>();
+
+		list.forEach(item => {
+			const { create_time } = item;
+
+			let set = map.get(create_time);
+
+			if (!set) map.set(create_time, set = new Set());
+
+			map.set(create_time, set?.add(item));
+
+		})
+		return map;
+	}, [list]);
 
 	return (
 		<div className="page-list-container">
 			<h1 className='title'>Meeting Notes</h1>
 
 			<div className="page-list" onScroll={onScroll}>
-				{RenderListItem(dataSourceMap)}
+				{/* <div className="placeholder" style={{ height: totalHeight }}></div> */}
+
+				{/* <div style={{ position: 'absolute', top: position, left: 0, width: '100%' }}> */}
+					{RenderListItem(dataSourceMap)}
+				{/* </div> */}
+
 				{loading &&
 					<div className="loading">
 						loading....

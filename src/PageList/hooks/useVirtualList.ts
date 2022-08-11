@@ -11,30 +11,31 @@ const useVirtualList = <T>(list: T[], options: {
 }) => {
     const [offset, setOffset] = useState(1);
 
-    const index = useRef(1);
+    const index = useRef(0);
 
     const dataSource = useMemo(() => {
-        const start = index.current > 1 ? +(index.current * options.showNumber).toFixed(0) : 0;
-        const end = start + options.showNumber;
-        console.log(start, end);
+        const start = (index.current * options.showNumber);
 
-        return list.slice(start, end);
+        const end = start + options.showNumber;
+        console.log(start, end, index.current);
+
+        return list.slice(start, end,);
     }, [offset, list])
 
     useEffect(() => {
+        if (!options.totalHeight) return;
 
+        console.log('---asdasd', +options.offset + options.screenHeight, options.totalHeight);
 
-        console.log('---asdasd',+options.offset+options.screenHeight , options.totalHeight);
-
-        if (+options.offset+options.screenHeight >= options.totalHeight-1) {
+        if (+options.offset + options.screenHeight >= options.totalHeight) {
             index.current += 1;
-            setOffset(options.offset);
+            setOffset(+options.offset + options.screenHeight);
         }
 
-    }, [options.offset])
+    }, [options.offset, list])
 
 
-    
+
     return { position: offset, dataSource }
 
 }

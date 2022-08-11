@@ -17,7 +17,7 @@
 	margin-right: 4px;
 }
 
-.expand-card .card-head .down {
+.expand-card .card-head .expanded {
 	transform: rotate(-180deg);
 }
 
@@ -27,4 +27,13 @@
 
 .expand-card .container-item:last-child {
 	margin-bottom: 0;
+}
+
+.expand-card .expand-container {
+	overflow: hidden;
+	transition: height .2s ease;
+}
+
+.expand-card .container-expanded {
+	transition: height .2s ease;
 }
