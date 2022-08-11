@@ -10,6 +10,7 @@ import { getList, GetListReponseItem } from './api'
 
 import './style.css';
 
+
 /** 渲染 listItem */
 const RenderListItem = (map: Map<number, Set<GetListReponseItem>>) => {
 	const keys = [...map.keys()]
@@ -23,25 +24,23 @@ const RenderListItem = (map: Map<number, Set<GetListReponseItem>>) => {
 
 
 const PageList = () => {
+
 	const { loading, dataSource, onScroll, hasMore, offset } = usePagingList(getList);
 
+
+	/** create_time => Set<GetListReponseItem> */
 	const dataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
 
 		dataSource.forEach(item => {
 			const { create_time } = item;
-
 			let set = map.get(create_time);
-
 			if (!set) map.set(create_time, set = new Set());
-
 			map.set(create_time, set?.add(item));
-
 		})
+
 		return map;
 	}, [dataSource]);
-
-
 
 	const totalHeight = useMemo(() => {
 		let tmp = 0;
@@ -53,10 +52,11 @@ const PageList = () => {
 		return tmp ? tmp - 20 : 0
 	}, [dataSourceMap])
 
+
+
 	const { position, dataSource: list } = useVirtualList(dataSource, { totalHeight, screenHeight: 820, showNumber: 10, offset })
 
 
-	console.log(position);
 
 	const renderDataSourceMap = useMemo(() => {
 		const map = new Map<number, Set<typeof dataSource[0]>>();
@@ -82,7 +82,7 @@ const PageList = () => {
 				{/* <div className="placeholder" style={{ height: totalHeight }}></div> */}
 
 				{/* <div style={{ position: 'absolute', top: position, left: 0, width: '100%' }}> */}
-					{RenderListItem(dataSourceMap)}
+				{RenderListItem(dataSourceMap)}
 				{/* </div> */}
 
 				{loading &&

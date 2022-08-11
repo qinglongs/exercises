@@ -17,22 +17,19 @@ const useVirtualList = <T>(list: T[], options: {
         const start = (index.current * options.showNumber);
 
         const end = start + options.showNumber;
-        console.log(start, end, index.current);
 
         return list.slice(start, end,);
-    }, [offset, list])
+    }, [options.showNumber, list])
 
     useEffect(() => {
         if (!options.totalHeight) return;
-
-        console.log('---asdasd', +options.offset + options.screenHeight, options.totalHeight);
 
         if (+options.offset + options.screenHeight >= options.totalHeight) {
             index.current += 1;
             setOffset(+options.offset + options.screenHeight);
         }
 
-    }, [options.offset, list])
+    }, [options.offset, list, options.totalHeight, options.screenHeight])
 
 
 

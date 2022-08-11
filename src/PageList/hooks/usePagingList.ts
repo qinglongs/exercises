@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import type { BasePageRequestParams, BasePagingReponse } from '../api';
 
-const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<BasePagingReponse<T>>) => {
+const usePagingList = <T>(getList: (params: BasePageRequestParams,) => Promise<BasePagingReponse<T>>, options?: { totalHeight: number }) => {
 
 	const [dataSource, setDataSource] = useState<T[]>([]);
 
@@ -20,6 +20,7 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<Ba
 		const scrollTop = target.scrollTop;
 		setOffset(scrollTop);
 
+		// 触底
 		if (clientHeight + scrollTop >= scrollHeigth - 1) {
 			onTouchBottom();
 		}
@@ -58,7 +59,7 @@ const usePagingList = <T>(getList: (params: BasePageRequestParams) => Promise<Ba
 	}, [])
 
 
-	return { loading, dataSource, onScroll, hasMore: pageParams.current.hasMore,offset }
+	return { loading, dataSource, onScroll, hasMore: pageParams.current.hasMore, offset }
 }
 
 export default usePagingList;

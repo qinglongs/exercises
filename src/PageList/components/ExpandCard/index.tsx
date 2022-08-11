@@ -22,7 +22,7 @@ const ExpandCard: React.FC<Props> = ({ title, list }) => {
 	const iconClassName = useMemo(() => expanded ? '' : 'expanded', [expanded]);
 
 	/** card container 高度 */
-	const containerHeight = useMemo(() => expanded ? (list.length * (59 + 12)) - 12 : 0, [list, expanded])
+	const containerHeight = useMemo(() => expanded ? (list.length * (59 + 12)) - 11 : 0, [list, expanded])
 
 	return <div className="expand-card">
 
