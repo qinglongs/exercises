@@ -6,7 +6,6 @@ import CardContent from "../CardContent";
 import type { GetListReponseItem } from "../../api";
 
 import "./style.css";
-import dayjs from "dayjs";
 
 type Props = {
   list: GetListReponseItem[];
@@ -51,9 +50,7 @@ const ExpandCard: React.FC<Props> = ({
           src={ArrowDownIcon}
           alt="arrow-icon"
         />
-        <span className="card-title">
-          {dayjs(title).format("YYYY-MM-DD HH:mm:ss")}
-        </span>
+        <span className="card-title">title</span>
       </div>
 
       <div

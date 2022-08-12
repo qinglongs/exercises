@@ -128,7 +128,7 @@ const useVirtualList = (
     generateEstimatedItemData();
   }, [dataSource]);
 
-  return { onScroll, updateItemHeight, scrollBarHeight, scrollTop, list };
+  return { scrollBarHeight, scrollTop, list, onScroll, updateItemHeight };
 };
 
 export default useVirtualList;
