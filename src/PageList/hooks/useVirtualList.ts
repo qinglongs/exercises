@@ -1,18 +1,21 @@
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo, useLayoutEffect } from "react";
 
 import type { GetListReponseItem } from "../api";
 
-/** 虚拟滚动，支持不定高 元素的偏移度计算还有点误差需要优化 */
-const useVirtualList =(
+/**
+ * 支持不定高元素的虚拟滚动hooks
+ */
+const useVirtualList = (
   params: {
     estimatedItemHeight: number;
     showNumber: number;
     loading: boolean;
+    bufferCount: number;
   },
   // 先写死 dataSource 的类型
   dataSource: Map<number, Set<GetListReponseItem>>
 ) => {
-  const { estimatedItemHeight, showNumber, loading } = params;
+  const { estimatedItemHeight, showNumber, loading, bufferCount } = params;
 
   /** 每个元素距离顶部的高度 */
   const itemTopCache = useRef<Array<number>>([]);
@@ -24,14 +27,11 @@ const useVirtualList =(
 
   const [start, setStart] = useState(0);
 
-  const [end, setEnd] = useState(showNumber);
-
   const [scrollTop, setScrollTop] = useState(0);
 
-  const list = useMemo(
-    () => [...dataSource].slice(start, end),
-    [start, end, dataSource]
-  );
+  const list = useMemo(() => {
+    return [...dataSource].slice(start, start + showNumber + bufferCount);
+  }, [start, dataSource, showNumber, bufferCount]);
 
   /** 给每个元素设置高度并计算出总高度 */
   const generateEstimatedItemData = () => {
@@ -58,6 +58,7 @@ const useVirtualList =(
   }) => {
     // dom元素加载后得到实际高度 重新赋值回去
     itemHeightCache.current[index] = height;
+
     // 重新确定列表的实际总高度
     setscrollBarHeight(
       itemHeightCache.current.reduce((pre, current) => {
@@ -76,10 +77,11 @@ const useVirtualList =(
     itemTopCache.current = newItemTopCache;
   };
 
-  /** 查找到开始的元素位置 */
+  /** 找到最接近scrollTop的元素位置 */
   const getStartIndex = (scrollTop: number) => {
     // 每一项距顶部的距离
     let arr = itemTopCache.current;
+
     let index = -1;
     let left = 0,
       right = arr.length - 1,
@@ -105,32 +107,24 @@ const useVirtualList =(
         return index;
       }
     }
-    console.log(index);
-
     index = left;
+
     return index;
   };
 
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
     if (loading) return;
     const target = event.target as HTMLDivElement;
-    const scrollTop = target.scrollTop;
+    const top = target.scrollTop;
 
-    let startIndex = getStartIndex(scrollTop);
+    let startIndex = getStartIndex(top);
 
-    // 如果是奇数开始，就取其前一位偶数
-    if (startIndex % 2 !== 0) {
-      setStart(startIndex - 1);
-    } else {
-      setStart(startIndex);
-    }
-
-    setEnd(startIndex + showNumber);
-
-    setScrollTop(itemTopCache.current[startIndex] || 0);
+    setStart(startIndex);
+    setScrollTop(itemTopCache.current[startIndex]);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!dataSource.size) return;
     generateEstimatedItemData();
   }, [dataSource]);
 

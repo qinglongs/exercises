@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import ExpandCard from "./components/ExpandCard/index";
 
@@ -32,13 +32,13 @@ const PageList = () => {
 
   const { list, onScroll, updateItemHeight, scrollBarHeight, scrollTop } =
     useVirtualList(
-      { estimatedItemHeight: 89, showNumber: 10, loading },
+      { estimatedItemHeight: 109.6, showNumber: 10, loading, bufferCount: 4 },
       dataSourceMap
     );
 
-  const handleScroll = (event: any) => {
-    onScroll(event);
+  const handleScroll = async (event: any) => {
     onPageScroll(event);
+    onScroll(event);
   };
 
   /** 渲染 listItem */
@@ -63,7 +63,7 @@ const PageList = () => {
 
   return (
     <div className="page-list-container">
-      <h1 className="title">Meeting Notes</h1>
+      <h1 className="title">Meeting Notes {scrollBarHeight}</h1>
 
       <div className="page-list" onScroll={handleScroll}>
         <div className="placeholder" style={{ height: scrollBarHeight }}>

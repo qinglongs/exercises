@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import type { BasePageRequestParams, BasePagingReponse } from "../api";
 
+const PAGE_SIZE = 10;
+
+/** 滚动无限分页加载hooks */
 const usePagingList = <T>(
   getList: (params: BasePageRequestParams) => Promise<BasePagingReponse<T>>
 ) => {
@@ -9,9 +12,7 @@ const usePagingList = <T>(
 
   const [loading, setLoading] = useState(false);
 
-  const pageParams = useRef({ current: 1, pageSize: 20, hasMore: true });
-
-  const [offset, setOffset] = useState(0);
+  const pageParams = useRef({ current: 1, pageSize: PAGE_SIZE, hasMore: true });
 
   /** 滚动事件 */
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
@@ -19,18 +20,17 @@ const usePagingList = <T>(
     const scrollHeigth = target.scrollHeight;
     const clientHeight = target.clientHeight;
     const scrollTop = target.scrollTop;
-    setOffset(scrollTop);
 
     // 触底
 
     if (clientHeight + scrollTop >= scrollHeigth - 1) {
-      onTouchBottom();
+      return onTouchBottom();
     }
   };
 
   /** 滚动触底时触发 */
   const onTouchBottom = () => {
-    fetchList();
+    return fetchList();
   };
 
   const fetchList = async (refresh?: boolean) => {
@@ -38,7 +38,7 @@ const usePagingList = <T>(
 
     if (refresh) {
       pageParams.current.current = 1;
-      pageParams.current.pageSize = 10;
+      pageParams.current.pageSize = PAGE_SIZE;
       pageParams.current.hasMore = true;
     } else {
       pageParams.current.current += 1;
@@ -50,7 +50,8 @@ const usePagingList = <T>(
         page_now: pageParams.current.current,
         page_size: pageParams.current.pageSize,
       });
-      const tmp = refresh ? res.list : dataSource.concat(res.list);
+      const result = res.list.filter((item) => item);
+      const tmp = refresh ? result : dataSource.concat(result);
       setDataSource(tmp);
       pageParams.current.hasMore = dataSource.length < res.page.total_num;
     } finally {
@@ -66,9 +67,8 @@ const usePagingList = <T>(
   return {
     loading,
     dataSource,
-    onScroll,
     hasMore: pageParams.current.hasMore,
-    offset,
+    onScroll,
   };
 };
 
