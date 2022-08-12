@@ -21,12 +21,14 @@ const PageList = () => {
   /** create_time => Set<GetListReponseItem> */
   const dataSourceMap = useMemo(() => {
     const map = new Map<number, Set<typeof dataSource[0]>>();
+
     dataSource.forEach((item) => {
       const { create_time } = item;
       let set = map.get(create_time);
       if (!set) map.set(create_time, (set = new Set()));
       map.set(create_time, set?.add(item));
     });
+    
     return map;
   }, [dataSource]);
 
@@ -63,16 +65,16 @@ const PageList = () => {
 
   return (
     <div className="page-list-container">
-      <h1 className="title">Meeting Notes {scrollBarHeight}</h1>
-
+      <h1 className="title">Meeting Notes</h1>
       <div className="page-list" onScroll={handleScroll}>
         <div className="placeholder" style={{ height: scrollBarHeight }}>
           {RenderListItem()}
         </div>
-      </div>
-      {loading && <div className="loading">loading....</div>}
 
-      {!hasMore && <div className="loading">没有更多数据了</div>}
+        {/* 下面这两个提示文字还可以优化，展示的位置可能会有点不正常 */}
+        {loading && <div className="loading">loading....</div>}
+        {!hasMore && <div className="loading">没有更多数据了</div>}
+      </div>
     </div>
   );
 };

@@ -50,7 +50,7 @@ const ExpandCard: React.FC<Props> = ({
           src={ArrowDownIcon}
           alt="arrow-icon"
         />
-        <span className="card-title">title</span>
+        <span className="card-title">{title}</span>
       </div>
 
       <div
