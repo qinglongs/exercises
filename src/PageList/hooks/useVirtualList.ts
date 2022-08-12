@@ -23,12 +23,16 @@ const useVirtualList = (
   /** 每个元素的高度 */
   const itemHeightCache = useRef<Array<number>>([]);
 
+  /** 滚动高度 */
   const [scrollBarHeight, setscrollBarHeight] = useState(0);
 
+  /** 可渲染数组的起始位置 */
   const [start, setStart] = useState(0);
 
+  /** 元素距离滚动容器顶部的距离 */
   const [scrollTop, setScrollTop] = useState(0);
 
+  /** 可渲染的数据 */
   const list = useMemo(() => {
     return [...dataSource].slice(start, start + showNumber + bufferCount);
   }, [start, dataSource, showNumber, bufferCount]);
