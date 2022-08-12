@@ -23,7 +23,6 @@ export type GetListReponseItem = {
   duration: number;
   id: string;
   title: string;
-  height?: number;
 };
 
 enum Api {
