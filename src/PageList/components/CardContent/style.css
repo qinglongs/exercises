@@ -20,6 +20,10 @@
   font-weight: bold;
   color: #fff;
   margin-bottom: 4px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .expand-card .card-container .time-range {

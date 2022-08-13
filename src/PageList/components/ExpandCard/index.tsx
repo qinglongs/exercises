@@ -24,6 +24,10 @@ const ExpandCard: React.FC<Props> = ({
 
   const cardNode = useRef<HTMLElement>();
 
+  const containerNode = useRef<HTMLElement>();
+
+  const timer = useRef<ReturnType<typeof requestAnimationFrame>>();
+
   const onClickExpand = () => {
     setExpand(!expanded);
   };
@@ -31,16 +35,24 @@ const ExpandCard: React.FC<Props> = ({
   /**  控制 arrow-icon 的方向 */
   const iconClassName = useMemo(() => (expanded ? "" : "expanded"), [expanded]);
 
-  /** card container 高度 */
-  const containerHeight = useMemo(
-    () => (expanded ? list.length * (59 + 12) - 11 : 0),
-    [list, expanded]
-  );
+  const [containerHeight, setContainerHeight] = useState<string | number>("");
 
   useLayoutEffect(() => {
-    const height = cardNode.current!.clientHeight;
-    updateItemHeight({ index, height });
+    timer.current = requestAnimationFrame(() => {
+      const height = cardNode.current!.clientHeight;
+      updateItemHeight({ index, height });
+    });
+
+    return () => {
+      clearTimeout(timer.current);
+    };
   }, [expanded]);
+
+  // 设置容器高度
+  useLayoutEffect(() => {
+    const height = containerNode.current!.clientHeight;
+    setContainerHeight(height);
+  }, []);
 
   return (
     <div className="expand-card" ref={(node) => (cardNode.current = node!)}>
@@ -54,10 +66,11 @@ const ExpandCard: React.FC<Props> = ({
       </div>
 
       <div
-        style={{ height: containerHeight }}
+        style={{ height: expanded ? containerHeight : 0 }}
         className={`expand-container ${
           iconClassName ? "container-" + iconClassName : ""
         }`}
+        ref={(node) => (containerNode.current = node!)}
       >
         {list.map((item) => {
           return (

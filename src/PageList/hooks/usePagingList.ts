@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { BasePageRequestParams, BasePagingReponse } from "../api";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 100;
 
 /** 滚动无限分页加载hooks */
 const usePagingList = <T>(
