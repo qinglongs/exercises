@@ -34,12 +34,12 @@ const usePagingList = <T>(
   };
 
   const fetchList = async (refresh?: boolean) => {
-    if (loading || !pageParams.current.hasMore) return;
+    if (refresh) pageParams.current.hasMore = true;
 
+    if (loading || !pageParams.current.hasMore) return;
     if (refresh) {
       pageParams.current.current = 1;
       pageParams.current.pageSize = PAGE_SIZE;
-      pageParams.current.hasMore = true;
     } else {
       pageParams.current.current += 1;
     }
