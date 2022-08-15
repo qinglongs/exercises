@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { useEffect, useRef, useState, useCallback } from "react";
 
 import type { BasePageRequestParams, BasePagingReponse } from "../api";
 
@@ -16,13 +17,12 @@ const usePagingList = <T>(
 
   /** 滚动事件 */
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
-    const target = event.target as HTMLDivElement;
+    const target = <HTMLDivElement>(event.target);
     const scrollHeigth = target.scrollHeight;
     const clientHeight = target.clientHeight;
     const scrollTop = target.scrollTop;
 
     // 触底
-
     if (clientHeight + scrollTop >= scrollHeigth - 1) {
       return onTouchBottom();
     }
@@ -51,9 +51,13 @@ const usePagingList = <T>(
         page_size: pageParams.current.pageSize,
       });
       const result = res.list.filter((item) => item);
-      const tmp = refresh ? result : dataSource.concat(result);
-      setDataSource(tmp);
-      pageParams.current.hasMore = dataSource.length < res.page.total_num;
+      setDataSource((dataSource) => {
+        const tmp = refresh ? result : dataSource.concat(result)
+        pageParams.current.hasMore = tmp.length < res.page.total_num;
+        return tmp;
+      })
+
+
     } finally {
       setLoading(false);
     }

@@ -60,7 +60,6 @@ const useVirtualList = (
   }) => {
     // dom元素加载后得到实际高度 重新赋值回去
     itemHeightCache[index] = height;
- 
     
     const scrollBarHeight = itemHeightCache.reduce((pre, current) => {
       return pre + current;
