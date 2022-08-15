@@ -2,6 +2,9 @@ import { useState, useRef, useMemo, useLayoutEffect } from "react";
 
 import type { GetListReponseItem } from "../api";
 
+const itemHeightCache:number[] = [];
+
+let itemTopCache:number[] = [];
 /**
  * 支持不定高元素的虚拟滚动hooks
  */
@@ -17,11 +20,6 @@ const useVirtualList = (
 ) => {
   const { estimatedItemHeight, showNumber, loading, bufferCount } = params;
 
-  /** 每个元素距离顶部的高度 */
-  const itemTopCache = useRef<Array<number>>([]);
-
-  /** 每个元素的高度 */
-  const itemHeightCache = useRef<Array<number>>([]);
 
   /** 滚动高度 */
   const [scrollBarHeight, setscrollBarHeight] = useState(0);
@@ -41,10 +39,10 @@ const useVirtualList = (
   const generateEstimatedItemData = () => {
     const estimatedTotalHeight = [...dataSource].reduce((pre, _, index) => {
       // 给每一项一个虚拟高度
-      itemHeightCache.current[index] = estimatedItemHeight;
+      itemHeightCache[index] = estimatedItemHeight;
       // 给每一项距顶部的虚拟高度
-      itemTopCache.current[index] =
-        index === 0 ? 0 : itemTopCache.current[index - 1] + estimatedItemHeight;
+      itemTopCache[index] =
+        index === 0 ? 0 : itemTopCache[index - 1] + estimatedItemHeight;
       return pre + estimatedItemHeight;
     }, 0);
 
@@ -61,31 +59,32 @@ const useVirtualList = (
     height: number;
   }) => {
     // dom元素加载后得到实际高度 重新赋值回去
-    itemHeightCache.current[index] = height;
+    itemHeightCache[index] = height;
+ 
+    
+    const scrollBarHeight = itemHeightCache.reduce((pre, current) => {
+      return pre + current;
+    }, 0);
 
     // 重新确定列表的实际总高度
-    setscrollBarHeight(
-      itemHeightCache.current.reduce((pre, current) => {
-        return pre + current;
-      }, 0)
-    );
+    setscrollBarHeight(scrollBarHeight);
 
     let newItemTopCache = [0];
-    for (let i = 1, l = itemHeightCache.current.length; i < l; i++) {
+    for (let i = 1, l = itemHeightCache.length; i < l; i++) {
       // 虚拟每项距顶部高度 + 实际每项高度
       newItemTopCache[i] =
-        itemTopCache.current[i - 1] + itemHeightCache.current[i - 1];
+        itemTopCache[i - 1] + itemHeightCache[i - 1];
     }
-
     // 获得每一项距顶部的实际高度
-    itemTopCache.current = newItemTopCache;
+    itemTopCache = newItemTopCache;
+    
   };
 
   /** 找到最接近scrollTop的元素位置 */
   const getStartIndex = (scrollTop: number) => {
     // 每一项距顶部的距离
-    let arr = itemTopCache.current;
-
+    let arr = itemTopCache;
+    
     let index = -1;
     let left = 0,
       right = arr.length - 1,
@@ -111,6 +110,7 @@ const useVirtualList = (
         return index;
       }
     }
+
     index = left;
 
     return index;
@@ -118,13 +118,11 @@ const useVirtualList = (
 
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
     if (loading) return;
-    const target = event.target as HTMLDivElement;
-    const top = target.scrollTop;
-
-    let startIndex = getStartIndex(top);
-
-    setStart(startIndex);
-    setScrollTop(itemTopCache.current[startIndex]);
+      const target = event.target as HTMLDivElement;
+      const top = target.scrollTop;
+      let startIndex = getStartIndex(top);
+      setStart(startIndex);
+      setScrollTop(itemTopCache[startIndex]);
   };
 
   useLayoutEffect(() => {

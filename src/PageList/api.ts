@@ -38,10 +38,9 @@ export const getList = async (params: BasePageRequestParams) => {
   // 做一个建议的请求拦截
   if (response.status === 200) {
     const { data } = await response.json();
-
+    
     return data as BasePagingReponse<GetListReponseItem>;
   }
 
   return Promise.reject();
 };
-

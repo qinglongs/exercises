@@ -1,39 +1,39 @@
 .expand-card .card-head {
-	display: flex;
-	align-items: center;
-	margin-bottom: 8px;
-	cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
 }
 
 .expand-card .card-head .card-title {
-	color: #fff;
-	font-size: 16px;
-	font-weight: 500;
-	text-align: left;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
 }
 
 .expand-card .card-head .arrow-icon {
-	transition: transform .5s ease;
-	margin-right: 4px;
+  transition: transform 0.5s ease;
+  margin-right: 4px;
 }
 
 .expand-card .card-head .expanded {
-	transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
 
 .expand-card .container-item {
-	margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .expand-card .container-item:last-child {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .expand-card .expand-container {
-	overflow: hidden;
-	transition: height .2s ease;
+  overflow: hidden;
+  transition: height 0.2s ease;
 }
 
 .expand-card .container-expanded {
-	transition: height .2s ease;
+  transition: height 0.2s ease;
 }
