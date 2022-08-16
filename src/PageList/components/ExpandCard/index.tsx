@@ -46,7 +46,7 @@ const ExpandCard: React.FC<Props> = ({
     return () => {
       clearTimeout(timer.current);
     };
-  }, [expanded]);
+  }, [expanded,index,updateItemHeight]);
 
   // 设置容器高度
   useLayoutEffect(() => {
