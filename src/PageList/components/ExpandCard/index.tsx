@@ -44,7 +44,7 @@ const ExpandCard: React.FC<Props> = ({
   // 设置容器高度
   useLayoutEffect(() => {
     const height = containerNode.current!.clientHeight;
-    setContainerHeight(height + 1);
+    setContainerHeight(height);
   }, []);
 
   return (
