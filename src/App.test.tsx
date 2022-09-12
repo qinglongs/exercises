@@ -1,9 +1,14 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+beforeEach(() => {
+  console.log('before-each');
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+});
+
+afterEach(() => {
+  // 退出时进行清理
+  console.log('after-each')
+});
+
+it("渲染用户数据", async () => {
+
+  console.log('xxxxx----');
 });
