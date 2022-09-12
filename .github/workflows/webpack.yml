@@ -1,4 +1,4 @@
-name: learn-github-actions
+name: exercises
 on: [push]
 jobs:
   test-page-list:
