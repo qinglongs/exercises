@@ -10,7 +10,7 @@ import { getList } from "./api";
 
 import "./style.css";
 
-const PageList = () => {
+const PageList: React.FC<{ title?: string }> = ({ title }) => {
   const {
     loading,
     dataSource,
@@ -28,7 +28,7 @@ const PageList = () => {
       if (!set) map.set(create_time, (set = new Set()));
       map.set(create_time, set?.add(item));
     });
-    
+
     return map;
   }, [dataSource]);
 
@@ -65,7 +65,7 @@ const PageList = () => {
 
   return (
     <div className="page-list-container">
-      <h1 className="title">Meeting Notes</h1>
+      <h1 className="title">{title ? title : 'Meeting Notes'}</h1>
       <div className="page-list" onScroll={handleScroll}>
         <div className="placeholder" style={{ height: scrollBarHeight }}>
           {RenderListItem()}

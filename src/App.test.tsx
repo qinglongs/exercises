@@ -1,14 +1,8 @@
-beforeEach(() => {
-  console.log('before-each');
+import { render } from '@testing-library/react';
+import PageList from './PageList/index';
 
-});
-
-afterEach(() => {
-  // 退出时进行清理
-  console.log('after-each')
-});
-
-it("渲染用户数据", async () => {
-
-  console.log('xxxxx----');
+it("渲染pageList", async () => {
+  const {container} =  render(<PageList title='自定义title' />,{container:document.createElement('div')})
+  // eslint-disable-next-line testing-library/no-node-access
+  expect(container!.querySelector?.(".title")!.textContent).toBe('自定义title');
 });
